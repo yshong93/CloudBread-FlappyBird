@@ -8,7 +8,8 @@ public enum GameState
 {
     Intro,
     Playing,
-    Dead
+    Dead,
+    Ranking
 }
 
 public static class GameStateManager
@@ -19,8 +20,6 @@ public static class GameStateManager
     {
         GameState = GameState.Intro;
     }
-
-
 
 }
 
