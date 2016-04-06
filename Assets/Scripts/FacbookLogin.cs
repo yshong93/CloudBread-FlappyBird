@@ -6,6 +6,7 @@ using Facebook.Unity;
 using AssemblyCSharp;
 using System.Text;
 using System;
+using Assets.Scripts.CloudBread;
 
 public class FacbookLogin : MonoBehaviour {
 
@@ -83,12 +84,13 @@ public class FacbookLogin : MonoBehaviour {
         byte[] decodedBytes = Convert.FromBase64String(encodedString);
         string decodedString = Encoding.UTF8.GetString(decodedBytes);
         print(decodedString);
+
+        PlayerPrefs.SetString("nickName", userName);
     }
 
     private void Login_success(string id, WWW www)
     {
         
-
         string resultJson = www.text;
         AuthData resultData = JsonParser.Read<AuthData>(resultJson);
         //AuthToken = resultData.authenticationToken;
@@ -97,7 +99,18 @@ public class FacbookLogin : MonoBehaviour {
         AzureMobileAppRequestHelper.AuthToken = resultData.authenticationToken;
         print(resultJson);
 
+        PlayerPrefs.SetString("userId", resultData.user.userId);
+        //PlayerPrefs.SetString("userId", )
+
+        CloudBread cb = new CloudBread();
+        cb.CBInsRegMember(callback);
+
         StartGame();
+    }
+
+    public void callback(string id , Dictionary<string, object>[] obj)
+    {
+
     }
 
     public void Login_error(string id, WWW www)
