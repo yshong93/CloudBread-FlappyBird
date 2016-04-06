@@ -43,4 +43,11 @@ public class ScoreManagerScript : MonoBehaviour {
     int previousScore = -1;
     public Sprite[] numberSprites;
     public SpriteRenderer Units, Tens, Hundreds;
+
+    public Sprite[] smallNumberSprites;
+    public SpriteRenderer[] NewScoreUnit;
+    public SpriteRenderer[] BestScoreUnit;
+
+    public Sprite[] medalSprites;
+    public SpriteRenderer medal;
 }
