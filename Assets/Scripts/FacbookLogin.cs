@@ -3,8 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using Facebook.Unity;
+using AssemblyCSharp;
+using System.Text;
+using System;
 
 public class FacbookLogin : MonoBehaviour {
+
+    private string ServerAddress = "https://cb2-auth-demo.azurewebsites.net/";
+    private AzureAuthentication azureAuth;
 
     // Awake function from Unity's MonoBehavior
     void Awake()
@@ -54,14 +60,50 @@ public class FacbookLogin : MonoBehaviour {
                 Debug.Log(perm);
             }
 
-            StartGame();
+            FB.API("me?fields=name", HttpMethod.GET, NameCallBack);
+            
+            // AuzreAuthentication 을 사용하여 인증 토큰 가져 오기
+            azureAuth = new AzureAuthentication();
+            azureAuth.Login(AzureAuthentication.AuthenticationProvider.Facebook, ServerAddress, aToken.TokenString, Login_success, Login_error);
 
-            PlayerPrefs.DeleteAll();
-            //PlayerPrefs.SetString("access_token", aToken);
         }
         else {
             Debug.Log("User cancelled login");
         }
+    }
+
+    private void NameCallBack(IGraphResult result)
+    {
+        string userName = (string)result.ResultDictionary["name"];
+        // utf-8 인코딩
+        byte[] bytesForEncoding = Encoding.UTF8.GetBytes(userName);
+        string encodedString = Convert.ToBase64String(bytesForEncoding);
+
+        // utf-8 디코딩
+        byte[] decodedBytes = Convert.FromBase64String(encodedString);
+        string decodedString = Encoding.UTF8.GetString(decodedBytes);
+        print(decodedString);
+    }
+
+    private void Login_success(string id, WWW www)
+    {
+        
+
+        string resultJson = www.text;
+        AuthData resultData = JsonParser.Read<AuthData>(resultJson);
+        //AuthToken = resultData.authenticationToken;
+        //UserID = resultData.user.userId;
+
+        AzureMobileAppRequestHelper.AuthToken = resultData.authenticationToken;
+        print(resultJson);
+
+        StartGame();
+    }
+
+    public void Login_error(string id, WWW www)
+    {
+        print("[Error] : " + www.error);
+
     }
 
     // Use this for initialization
