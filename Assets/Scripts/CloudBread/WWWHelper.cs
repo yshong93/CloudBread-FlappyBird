@@ -29,10 +29,8 @@ public class WWWHelper : MonoBehaviour {
 		}
 	}
 
-	public Dictionary<string, string> HeaderDic;
-
 	public void get(string id, string url) {
-		var header = getHeaders ();
+        var header = AzureMobileAppRequestHelper.getHeader();
 		WWW www = new WWW (url, null, header);
 		
 		StartCoroutine(WaitForRequest(id, www));
@@ -40,21 +38,17 @@ public class WWWHelper : MonoBehaviour {
 
 	// POST with string JsonData
 	public void POST(string id, string url, string JsonData){
-		HeaderDic = AzureMobileAppRequestHelper.getHeader();
-
-        //// utf-8 인코딩
-        //byte[] bytesForEncoding = Encoding.UTF8.GetBytes(jsonString);
-        //string encodedString = Convert.ToBase64String(bytesForEncoding);
-
-        //// utf-8 디코딩
-        //byte[] decodedBytes = Convert.FromBase64String(encodedString);
-        //string decodedString = Encoding.UTF8.GetString(decodedBytes);
-
-        //byte[] jsonByte = Encoding.UTF8.GetBytes(decodedString);
+		var HeaderDic = AzureMobileAppRequestHelper.getHeader();
 
         WWW www = new WWW(url, Encoding.UTF8.GetBytes(JsonData), HeaderDic);
 		StartCoroutine(WaitForRequest(id, www));
 	}
+
+    public void POST(string id, string url, object BodyObj)
+    {
+        var jsonString = JsonParser.Write(BodyObj);
+        POST(id, url, jsonString);
+    }
 
 	private IEnumerator  WaitForRequest(string id, WWW www) {
 
@@ -70,32 +64,4 @@ public class WWWHelper : MonoBehaviour {
 		www.Dispose();
 	}
 
-	private Dictionary<string, string> getHeaders(Dictionary<string, string> header){
-		header ["Accept-Encoding"] = "gzip";
-		header ["Accept"] = "application/json";
-
-		header["ZUMO-API-VERSION"] = "2.0.0";
-		header["X-ZUMO-VERSION"] = "ZUMO/2.0 (lang=Managed; os=Windows Store; os_version=--; arch=X86; version=2.0.31217.0)";
-		header ["X-ZUMO-FEATURES"] = "AJ";
-		header ["X-ZUMO-INSTALLATION-ID"] = "fe52b710-0312-4cad-8d53-dfd28d4c6f9b";
-		header ["Content-Type"] = "application/json";
-		header["User-Agent"] = "ZUMO/2.0 (lang=Managed; os=Windows Store; os_version=--; arch=X86; version=2.0.31217.0)";
-		header ["x-zumo-auth"] = "ChangeHereForAuthentication";
-		return header;
-	}
-
-	private Dictionary<string, string> getHeaders(){
-		var header = new Dictionary<string, string> ();
-		header ["Accept-Encoding"] = "gzip";
-		header ["Accept"] = "application/json";
-		
-		header["ZUMO-API-VERSION"] = "2.0.0";
-		header["X-ZUMO-VERSION"] = "ZUMO/2.0 (lang=Managed; os=Windows Store; os_version=--; arch=X86; version=2.0.31217.0)";
-		header ["X-ZUMO-FEATURES"] = "AJ";
-		header ["X-ZUMO-INSTALLATION-ID"] = "fe52b710-0312-4cad-8d53-dfd28d4c6f9b";
-		header ["Content-Type"] = "application/json";
-		header["User-Agent"] = "ZUMO/2.0 (lang=Managed; os=Windows Store; os_version=--; arch=X86; version=2.0.31217.0)";
-		header ["x-zumo-auth"] = "ChangeHereForAuthentication";
-		return header;
-	}
 }
