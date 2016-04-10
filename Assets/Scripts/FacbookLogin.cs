@@ -76,14 +76,6 @@ public class FacbookLogin : MonoBehaviour {
     private void NameCallBack(IGraphResult result)
     {
         string userName = (string)result.ResultDictionary["name"];
-        // utf-8 인코딩
-        byte[] bytesForEncoding = Encoding.UTF8.GetBytes(userName);
-        string encodedString = Convert.ToBase64String(bytesForEncoding);
-
-        // utf-8 디코딩
-        byte[] decodedBytes = Convert.FromBase64String(encodedString);
-        string decodedString = Encoding.UTF8.GetString(decodedBytes);
-        print(decodedString);
 
         PlayerPrefs.SetString("nickName", userName);
     }
@@ -103,14 +95,16 @@ public class FacbookLogin : MonoBehaviour {
         //PlayerPrefs.SetString("userId", )
 
         CloudBread cb = new CloudBread();
-        cb.CBInsRegMember(callback);
+        cb.CBInsRegMember(Callback_Success);
 
-        StartGame();
+        
     }
 
-    public void callback(string id , Dictionary<string, object>[] obj)
+    public void Callback_Success(string id , WWW www)
     {
+        //print(JsonParser.WritePretty(obj));
 
+        StartGame();
     }
 
     public void Login_error(string id, WWW www)

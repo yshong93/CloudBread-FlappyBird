@@ -14,9 +14,9 @@ namespace Assets.Scripts.CloudBread
 
         private string auth = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdGFibGVfc2lkIjoic2lkOmNkMDIzZTcyMjgxZmE0ZTUzMGE0ZmMzYzgxODBlMjE4Iiwic3ViIjoic2lkOjgzMTZhZWU5NzY4ODk3NDg1Y2M3OGI5ZjY3NjYxZDJjIiwiaWRwIjoiZmFjZWJvb2siLCJ2ZXIiOiIzIiwiaXNzIjoiaHR0cHM6Ly9jYjItYXV0aC1kZW1vLmF6dXJld2Vic2l0ZXMubmV0LyIsImF1ZCI6Imh0dHBzOi8vY2IyLWF1dGgtZGVtby5henVyZXdlYnNpdGVzLm5ldC8iLCJleHAiOjE0NjUxMDQwOTAsIm5iZiI6MTQ1OTkzMTU0M30.wNgTUtXobPGGXYtLjZedyMrWI5WSbnhwN9Co6LdfgEg";
 
-        private Action<string, Dictionary<string, object>[]> _requestCallback = null;
+        private Action<string, WWW> _requestCallback = null;
 
-        public void CBInsRegMember(Action<string, Dictionary<string, object>[]> callback)
+        public void CBInsRegMember(Action<string, WWW> callback)
         {
             var ServerEndPoint = ServerAddress + "api/CBInsRegMember";
 
@@ -37,7 +37,26 @@ namespace Assets.Scripts.CloudBread
             _requestCallback = callback;
         }
 
+        public void CBComUdtMemberGameInfoes(Action<string, WWW> callback)
+        {
+            var ServerEndPoint = ServerAddress + "api/CBComUdtMemberGameInfoes";
 
+            WWWHelper helper = WWWHelper.Instance;
+            helper.OnHttpRequest += OnHttpRequest;
+
+            MemberGameInfo gameinfoData = new MemberGameInfo
+            {
+                MemberID = (string)PlayerPrefs.GetString("userId"),
+                Level = 2,
+                Points = PlayerPrefs.GetInt("bestScore")
+            };
+
+            string jsonBody = JsonParser.Write(gameinfoData);
+
+            helper.POST("CBComUdtMemberGameInfoes", ServerEndPoint, jsonBody);
+
+            _requestCallback = callback;
+        }
 
         private void HTTPRequestAuthSend()
         {
@@ -72,21 +91,7 @@ namespace Assets.Scripts.CloudBread
 
                 var RequestJsonString = www.text;
 
-                Dictionary<string, object>[] ResultDicData;
-
-                try
-                {
-                    ResultDicData = (Dictionary<string, object>[])JsonParser.Read2Object(RequestJsonString);
-
-                }
-                catch
-                {
-                    ResultDicData = new Dictionary<string, object>[1];
-                    ResultDicData[0] = new Dictionary<string, object>();
-                    ResultDicData[0].Add("Error", "JsonParsing Error");
-                }
-
-                _requestCallback(RequestJsonString, ResultDicData);
+                _requestCallback(RequestJsonString, www);
 
 
             }

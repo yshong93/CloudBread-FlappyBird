@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts.CloudBread;
 
 public class ScoreManagerScript : MonoBehaviour {
 
@@ -45,38 +46,48 @@ public class ScoreManagerScript : MonoBehaviour {
         }
         else if (GameStateManager.GameState == GameState.Dead)
         {
-            
-                deadRefreshFlag = false;
-                (Units.gameObject as GameObject).SetActive(false);
-                (Tens.gameObject as GameObject).SetActive(false);
-                (Hundreds.gameObject as GameObject).SetActive(false);
-
-                setScorewithSpirte(NewScoreUnit, Score);
-
-                int bestScore = 0;
-
-                if (PlayerPrefs.HasKey("bestScore"))
-                {
-                    bestScore = PlayerPrefs.GetInt("bestScore");
-                }
-                else
-                {
-                    PlayerPrefs.SetInt("bestScore", bestScore);
-                }
-
-                if (bestScore >= Score)
-                {
-                    setScorewithSpirte(BestScoreUnit, bestScore);
-                }
-                else
-                {
-                    PlayerPrefs.SetInt("bestScore", Score);
-                    setScorewithSpirte(BestScoreUnit, Score);
-                }
                 
+            (Units.gameObject as GameObject).SetActive(false);
+            (Tens.gameObject as GameObject).SetActive(false);
+            (Hundreds.gameObject as GameObject).SetActive(false);
+
+            setScorewithSpirte(NewScoreUnit, Score);
+
+            int bestScore = 0;
+
+            if (PlayerPrefs.HasKey("bestScore"))
+            {
+                bestScore = PlayerPrefs.GetInt("bestScore");
+            }
+            else
+            {
+                PlayerPrefs.SetInt("bestScore", bestScore);
+            }
+
+            if (bestScore >= Score)
+            {
+                setScorewithSpirte(BestScoreUnit, bestScore);
+            }
+            else
+            {
+                PlayerPrefs.SetInt("bestScore", Score);
+                setScorewithSpirte(BestScoreUnit, Score);
+            }
+
+            if (deadRefreshFlag)
+            {
+                deadRefreshFlag = false;
+                CloudBread cb = new CloudBread();
+                cb.CBComUdtMemberGameInfoes(Callback_Success);
+            }
         }
         
 
+    }
+
+    public void Callback_Success(string id, WWW www)
+    {
+        print("[" + id + "] Success");
     }
 
     private void setScorewithSpirte(SpriteRenderer[] renders, int Score)
