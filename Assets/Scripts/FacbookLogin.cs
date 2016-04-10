@@ -103,8 +103,16 @@ public class FacbookLogin : MonoBehaviour {
     public void Callback_Success(string id , WWW www)
     {
         //print(JsonParser.WritePretty(obj));
-
-        StartGame();
+        if (www.error != null) //새로 회원 가입
+        {
+            print("이미 가입된 회원");
+            StartGame();
+        }
+        else //이미 가입된 회원
+        {
+            print("새로 가입한 회원");
+            StartGame();
+        }
     }
 
     public void Login_error(string id, WWW www)
