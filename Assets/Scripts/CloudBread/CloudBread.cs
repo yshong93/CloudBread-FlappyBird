@@ -58,6 +58,38 @@ namespace Assets.Scripts.CloudBread
             _requestCallback = callback;
         }
 
+        public void CBRank(Action<string, WWW> callback)
+        {
+            var ServerEndPoint = ServerAddress + "api/CBRank";
+
+            WWWHelper helper = WWWHelper.Instance;
+            helper.OnHttpRequest += OnHttpRequest;
+
+            Dictionary<string, string> bodyDic = new Dictionary<string, string>();
+            bodyDic.Add("sid", (string)PlayerPrefs.GetString("nickName"));
+            bodyDic.Add("point", (string)PlayerPrefs.GetInt("bestScore").ToString());
+
+            helper.POST("CBRank", ServerEndPoint, bodyDic);
+
+            _requestCallback = callback;
+        }
+
+        public void CBTopRanker(Action<string, WWW> callback)
+        {
+            var nickName = (string)PlayerPrefs.GetString("nickName");
+
+            //var ServerEndPoint = ServerAddress + "api/topranker/" + CBUtils.CBEncoding(nickName) + "/30";
+            var ServerEndPoint = ServerAddress + "api/topranker/ccc/30";
+            Debug.Log(ServerEndPoint);
+
+            WWWHelper helper = WWWHelper.Instance;
+            helper.OnHttpRequest += OnHttpRequest;
+
+            helper.get("CBTopRanker", ServerEndPoint);
+
+            _requestCallback = callback;
+        }
+
         private void HTTPRequestAuthSend()
         {
             var serverEndPoint = ServerAddress + "api/ping";
@@ -85,6 +117,7 @@ namespace Assets.Scripts.CloudBread
             if (www.error != null)
             {
                 Debug.Log("[Error] " + www.error);
+                _requestCallback("error", www);
             }
             else {
                 Debug.Log(www.text);
