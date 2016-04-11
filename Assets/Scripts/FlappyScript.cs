@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts.CloudBread;
+using UnityEngine.UI;
 
 /// <summary>
 /// Spritesheet for Flappy Bird found here: http://www.spriters-resource.com/mobile_phone/flappybird/sheet/59537/
@@ -10,11 +12,12 @@ public class FlappyScript : MonoBehaviour
     public AudioClip FlyAudioClip, DeathAudioClip, ScoredAudioClip;
     public Sprite GetReadySprite;
     public float RotateUpSpeed = 1, RotateDownSpeed = 1;
-    public GameObject IntroGUI, DeathGUI;
+    public GameObject IntroGUI, DeathGUI, RaingBoardGUI;
     public Collider2D restartButtonGameCollider;
     public Collider2D rankingButtonGameCollider;
     public float VelocityPerJump = 3;
     public float XSpeed = 1;
+    public Text RankingBoardText;
 
     // Use this for initialization
     void Start()
@@ -75,8 +78,37 @@ public class FlappyScript : MonoBehaviour
                 GameStateManager.GameState = GameState.Intro;
                 Application.LoadLevel(Application.loadedLevelName);
             }
+            else if(rankingButtonGameCollider == Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(contactPoint))){
+                GameStateManager.GameState = GameState.Ranking;
+                RaingBoardGUI.SetActive(true);
+
+                CloudBread cb = new CloudBread();
+                cb.CBTopRanker(Callback_CBTopRanker);
+            }
+        }
+        else if(GameStateManager.GameState == GameState.Ranking)
+        {
+            Vector2 contactPoint = Vector2.zero;
+
+            if (Input.touchCount > 0)
+                contactPoint = Input.touches[0].position;
+            if (Input.GetMouseButtonDown(0))
+                contactPoint = Input.mousePosition;
+
+            //check if user wants to restart the game
+            if (restartButtonGameCollider == Physics2D.OverlapPoint
+                (Camera.main.ScreenToWorldPoint(contactPoint)))
+            {
+                GameStateManager.GameState = GameState.Intro;
+                Application.LoadLevel(Application.loadedLevelName);
+            }
         }
 
+    }
+
+    public void Callback_CBTopRanker(string str, WWW www)
+    {
+        RankingBoardText.text = www.text;
     }
 
 
