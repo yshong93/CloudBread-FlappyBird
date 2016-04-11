@@ -72,22 +72,31 @@ public class ScoreManagerScript : MonoBehaviour {
             {
                 PlayerPrefs.SetInt("bestScore", Score);
                 setScorewithSpirte(BestScoreUnit, Score);
+
+                if (deadRefreshFlag)
+                {
+                    deadRefreshFlag = false;
+                    CloudBread cb = new CloudBread();
+                    cb.CBComUdtMemberGameInfoes(Callback_Success);
+                }
             }
 
-            if (deadRefreshFlag)
-            {
-                deadRefreshFlag = false;
-                CloudBread cb = new CloudBread();
-                cb.CBComUdtMemberGameInfoes(Callback_Success);
-            }
+
         }
-        
 
     }
 
     public void Callback_Success(string id, WWW www)
     {
         print("[" + id + "] Success");
+        CloudBread cb = new CloudBread();
+        cb.CBRank(Callback_CBRank);
+    }
+
+    public void Callback_CBRank(string str, WWW www)
+    {
+        print("CBRank Success");
+        print(str);
     }
 
     private void setScorewithSpirte(SpriteRenderer[] renders, int Score)
