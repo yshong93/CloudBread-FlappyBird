@@ -152,9 +152,10 @@ public class FacbookLogin : MonoBehaviour {
 
     public void LoginButtonClicked()
     {
-        if (!FB.IsLoggedIn)
-            LoginwithPermissions();
-
-        print("LoginButtonClicked");
+		if (!FB.IsLoggedIn)
+			LoginwithPermissions ();
+		else {
+			AuthCallback (null);
+		}
     }
 }
