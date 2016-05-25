@@ -12,7 +12,7 @@ public class FlappyScript : MonoBehaviour
     public AudioClip FlyAudioClip, DeathAudioClip, ScoredAudioClip;
     public Sprite GetReadySprite;
     public float RotateUpSpeed = 1, RotateDownSpeed = 1;
-    public GameObject IntroGUI, DeathGUI, RaingBoardGUI;
+    public GameObject IntroGUI, DeathGUI, RankingBoardGUI;
     public Collider2D restartButtonGameCollider;
     public Collider2D rankingButtonGameCollider;
     public float VelocityPerJump = 3;
@@ -80,10 +80,10 @@ public class FlappyScript : MonoBehaviour
             }
             else if(rankingButtonGameCollider == Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(contactPoint))){
                 GameStateManager.GameState = GameState.Ranking;
-                RaingBoardGUI.SetActive(true);
+                RankingBoardGUI.SetActive(true);
 
-                CloudBread cb = new CloudBread();
-                cb.CBTopRanker(Callback_CBTopRanker);
+//                CloudBread cb = new CloudBread();
+//                cb.CBTopRanker(Callback_CBTopRanker);
             }
         }
         else if(GameStateManager.GameState == GameState.Ranking)
