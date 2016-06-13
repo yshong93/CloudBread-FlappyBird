@@ -2,9 +2,20 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
 public class CBRankingGUI : MonoBehaviour {
+
+	public RankingRow[] RankingList;
+
+//	public Rect rect;
+
+	public GUIText myRankGUIText;
+	public GameObject myNameGUIText;
+	public GUIText myScoreGUIText;
+
+//	public ArrayList Ranking = new ArrayList ();
+
+	string testJson = "[{\"element\": \"415ee4a6338615d682e16bb7e6b56f05\",\"score\": 57,\"value\": 57,\"key\": \"415ee4a6338615d682e16bb7e6b56f05\"}]";
 
 	[Serializable]
 	public struct RankingRow {
@@ -21,31 +32,18 @@ public class CBRankingGUI : MonoBehaviour {
 		public string key;
 	}
 
-	public struct RankData {
-		public int rank;
-		public string name;
-		public string score;
+
+	public void setRankingData(){
+
 	}
-
+		
 	private const int RANK_NUM = 10;
-
-	public RankingRow[] RankingList;
-
-	public GameObject myNameTextGameObj;
-	public GameObject myScoreTextGameObj;
-	public GameObject myRankTextGameObj;
-
 	private GameObject [] RankingBoardRow_Gameobject = new GameObject [RANK_NUM];
-
-	string testJson = "[{\"element\": \"415ee4a6338615d682e16bb7e6b56f05\",\"score\": 57,\"value\": 57,\"key\": \"415ee4a6338615d682e16bb7e6b56f05\"}]";
-
 
 	// Use this for initialization
 	void Start () {
-		initMyRank ();
-
-		var a = JsonFx.Json.JsonReader.Deserialize<Dictionary<string, string>[]> (testJson);
-
+		var a = GameObject.Find ("MyNameText").GetComponent<Text>();
+		a.text = "Hong";
 
 		RankingBoardRow_Gameobject [0] = GameObject.Find ("RankingBoardRow");
 		RankingBoardRow_Gameobject [0].transform.FindChild ("RnakingNumText").GetComponent<Text> ().text = "1";
@@ -63,27 +61,13 @@ public class CBRankingGUI : MonoBehaviour {
 		gridLayoutGroup = parentObject.GetComponent<GridLayoutGroup> ();
 		rect = parentObject.GetComponent<RectTransform> ();
 
-		gridLayoutGroup.cellSize = new Vector2 (rect.rect.width, rect.rect.height/11);
+		gridLayoutGroup.cellSize = new Vector2 (rect.rect.width, 27);
 		cellCount = GetComponentsInChildren<RectTransform> ().Length;
-
-
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	}
-
-	private void initMyRank(){
-		myNameTextGameObj.GetComponent<Text> ().text = "홍윤석";
-		myRankTextGameObj.GetComponent<Text> ().text = "1";
-		myScoreTextGameObj.GetComponent<Text> ().text = "10000";
-	}
-
-	private void setRankBoardGameObjWithRankData(int num, RankData rankData){
-		GameObject rankBoardGameObj = RankingBoardRow_Gameobject [num];
-		rankBoardGameObj.transform.FindChild ("RnakingNumText").GetComponent<Text> ().text = (rankData.rank).ToString ();
-		rankBoardGameObj.transform.FindChild ("NameText").GetComponent<Text> ().text = rankData.name;
-		rankBoardGameObj.transform.FindChild ("ScoreText").GetComponent<Text> ().text = rankData.score;
+	
 	}
 
 	GridLayoutGroup gridLayoutGroup;
@@ -97,6 +81,4 @@ public class CBRankingGUI : MonoBehaviour {
 		if ((rect.rect.height + (gridLayoutGroup.padding.horizontal * 2)) * cellCount < rect.rect.width)
 			gridLayoutGroup.cellSize = new Vector2 (rect.rect.height, rect.rect.height);
 	}
-
-
 }
