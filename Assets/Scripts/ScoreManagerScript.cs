@@ -76,7 +76,7 @@ public class ScoreManagerScript : MonoBehaviour {
                 if (deadRefreshFlag)
                 {
                     deadRefreshFlag = false;
-                    CloudBread cb = new CloudBread();
+					Assets.Scripts.CloudBread.CloudBread cb = new Assets.Scripts.CloudBread.CloudBread();
                     cb.CBComUdtMemberGameInfoes(Callback_Success);
                 }
             }
@@ -89,7 +89,7 @@ public class ScoreManagerScript : MonoBehaviour {
     public void Callback_Success(string id, WWW www)
     {
         print("[" + id + "] Success");
-        CloudBread cb = new CloudBread();
+		Assets.Scripts.CloudBread.CloudBread cb = new Assets.Scripts.CloudBread.CloudBread();
         cb.CBRank(Callback_CBRank);
     }
 

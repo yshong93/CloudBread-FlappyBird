@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 using AssemblyCSharp;
 using Assets.Scripts.CloudBread.Data;
+//using UnityEngine;
 
 namespace Assets.Scripts.CloudBread
 {
     class CloudBread
     {
-        public static string ServerAddress = "https://cb2-auth-demo.azurewebsites.net/";
+		public static string ServerAddress = "https://cb2-auth-demo.azurewebsites.net/";
 
         private string auth = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdGFibGVfc2lkIjoic2lkOmNkMDIzZTcyMjgxZmE0ZTUzMGE0ZmMzYzgxODBlMjE4Iiwic3ViIjoic2lkOjgzMTZhZWU5NzY4ODk3NDg1Y2M3OGI5ZjY3NjYxZDJjIiwiaWRwIjoiZmFjZWJvb2siLCJ2ZXIiOiIzIiwiaXNzIjoiaHR0cHM6Ly9jYjItYXV0aC1kZW1vLmF6dXJld2Vic2l0ZXMubmV0LyIsImF1ZCI6Imh0dHBzOi8vY2IyLWF1dGgtZGVtby5henVyZXdlYnNpdGVzLm5ldC8iLCJleHAiOjE0NjUxMDQwOTAsIm5iZiI6MTQ1OTkzMTU0M30.wNgTUtXobPGGXYtLjZedyMrWI5WSbnhwN9Co6LdfgEg";
 
@@ -79,7 +81,7 @@ namespace Assets.Scripts.CloudBread
             var nickName = (string)PlayerPrefs.GetString("nickName");
 
             //var ServerEndPoint = ServerAddress + "api/topranker/" + CBUtils.CBEncoding(nickName) + "/30";
-            var ServerEndPoint = ServerAddress + "api/topranker/ccc/30";
+            var ServerEndPoint = ServerAddress + "api/topranker/ccc/10";
             Debug.Log(ServerEndPoint);
 
             WWWHelper helper = WWWHelper.Instance;
@@ -89,6 +91,53 @@ namespace Assets.Scripts.CloudBread
 
             _requestCallback = callback;
         }
+
+		public void CBComSelMember(string memberID, Action<string, WWW> callback)
+		{
+//			var nickName = (
+			var ServerEndPoint = ServerAddress + "api/CBComSelMember";
+//			Debug.Log(ServerEndPoint);
+			Debug.Log("[CBComSelMember] : " + memberID);
+
+			WWWHelper helper = WWWHelper.Instance;
+			helper.OnHttpRequest += OnHttpRequest;
+
+			Dictionary<string, string> bodyDic = new Dictionary<string, string> ();
+			bodyDic.Add ("memberID", memberID);
+
+			helper.POST("CBComSelMember", ServerEndPoint, bodyDic);
+
+			_requestCallback = callback;
+		}
+
+		public void CBComSelMember2(string memberID, Action<string, WWW> callback)
+		{
+			
+			var ServerEndPoint = ServerAddress + "api/CBComSelMember";
+			Debug.Log("[CBComSelMember2] : " + memberID);
+
+			WWWHelper helper = WWWHelper.Instance;
+
+			Dictionary<string, string> bodyDic = new Dictionary<string, string> ();
+			bodyDic.Add ("memberID", memberID);
+
+			helper.POST ("CBComSelMember", ServerEndPoint, bodyDic, callback);
+
+		}
+
+//		private IEnumerator  WaitForRequest(string id, WWW www) {
+//
+//			yield return www;
+//
+//
+//			bool hasCompleteListener = (OnHttpRequest != null);
+//
+//			if (hasCompleteListener) {
+//				OnHttpRequest(id, www);
+//			}
+//
+//			www.Dispose();
+//		}
 
         private void HTTPRequestAuthSend()
         {

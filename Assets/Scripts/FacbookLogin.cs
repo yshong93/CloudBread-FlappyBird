@@ -10,7 +10,7 @@ using Assets.Scripts.CloudBread;
 
 public class FacbookLogin : MonoBehaviour {
 
-    private string ServerAddress = "https://cb2-auth-demo.azurewebsites.net/";
+	private string ServerAddress = "https://cb2-auth-demo.azurewebsites.net/";
     private AzureAuthentication azureAuth;
 
     // Awake function from Unity's MonoBehavior
@@ -94,7 +94,8 @@ public class FacbookLogin : MonoBehaviour {
         PlayerPrefs.SetString("userId", resultData.user.userId);
         //PlayerPrefs.SetString("userId", )
 
-        CloudBread cb = new CloudBread();
+		Assets.Scripts.CloudBread.CloudBread cb = new Assets.Scripts.CloudBread.CloudBread ();
+//		CloudBread.CloudBread cb = new CloudBread.CloudBread();
         cb.CBInsRegMember(Callback_Success);
 
         
@@ -110,6 +111,8 @@ public class FacbookLogin : MonoBehaviour {
         }
         else //이미 가입된 회원
         {
+			PlayerPrefs.SetInt("bestScore", 0);
+
             print("새로 가입한 회원");
             StartGame();
         }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.CloudBread;
 
 public class CBRankingGUI : MonoBehaviour {
 
@@ -37,15 +38,13 @@ public class CBRankingGUI : MonoBehaviour {
 
 	private GameObject [] RankingBoardRow_Gameobject = new GameObject [RANK_NUM];
 
-	string testJson = "[{\"element\": \"415ee4a6338615d682e16bb7e6b56f05\",\"score\": 57,\"value\": 57,\"key\": \"415ee4a6338615d682e16bb7e6b56f05\"}]";
-
 
 	// Use this for initialization
 	void Start () {
 		initMyRank ();
 
-		var a = JsonFx.Json.JsonReader.Deserialize<Dictionary<string, string>[]> (testJson);
-
+//		CloudBread cb = new CloudBread ();
+//		cb.CBComSelMember(
 
 		RankingBoardRow_Gameobject [0] = GameObject.Find ("RankingBoardRow");
 		RankingBoardRow_Gameobject [0].transform.FindChild ("RnakingNumText").GetComponent<Text> ().text = "1";
@@ -58,7 +57,7 @@ public class CBRankingGUI : MonoBehaviour {
 			RankingBoardRow_Gameobject [i].transform.FindChild ("RnakingNumText").GetComponent<Text> ().text = (i + 1).ToString ();
 		}
 
-		RankingBoardRow_Gameobject [7].transform.FindChild ("NameText").GetComponent<Text> ().text = "HiHIhI";
+//		RankingBoardRow_Gameobject [7].transform.FindChild ("NameText").GetComponent<Text> ().text = "HiHIhI";
 
 		gridLayoutGroup = parentObject.GetComponent<GridLayoutGroup> ();
 		rect = parentObject.GetComponent<RectTransform> ();
@@ -66,7 +65,81 @@ public class CBRankingGUI : MonoBehaviour {
 		gridLayoutGroup.cellSize = new Vector2 (rect.rect.width, rect.rect.height/11);
 		cellCount = GetComponentsInChildren<RectTransform> ().Length;
 
+		CloudBread cb = new CloudBread ();
+		cb.CBTopRanker (callback_TopRanker);
 
+	}
+
+	Dictionary<string, string>[] RankingResultDicArr;
+
+	private void callback_TopRanker(string id, WWW www){
+//		RankingList = JsonFx.Json.JsonReader.Deserialize<RankingRow[]> (www.text);
+
+		print("[callback_TopRanker] : " + www.text);
+		RankingResultDicArr = JsonFx.Json.JsonReader.Deserialize<Dictionary<string,string>[]> (www.text);
+
+		/*
+		foreach (var Rank in RankingResultDicArr) {
+		CloudBread cb = new CloudBread ();
+			cb.CBComSelMember2 (Rank["element"], callback_CBComSelMember);
+		}
+		*/
+
+		int j = 0;
+		foreach (var Rank in RankingResultDicArr) {
+			
+
+			setRankBoardGameObjWithRankData (j, new RankData {
+				name = Rank["element"],
+				score = Rank["score"],
+				rank = j+1
+			});
+			j++;
+
+//			rankDataList.Add (new RankData {
+//				name = Rank["element"],
+//				score = Rank["score"],
+//				rank = j
+//			});
+		}
+
+	}
+
+	int i = 0;
+
+	ArrayList rankDataList = new ArrayList();
+
+	private void callback_CBComSelMember(string id, WWW www){
+		print ("[callback_CBComSelMember] : " + www.text);
+		var dicArr = JsonFx.Json.JsonReader.Deserialize<Dictionary<string,string>[]> (www.text);
+
+
+		if (dicArr.Length != 0) {
+			rankDataList.Add (new RankData {
+				name = dicArr [0] ["name1"],
+				score = RankingResultDicArr [i] ["score"],
+				rank = i + 1
+			});
+			setRankBoardGameObjWithRankData (i, new RankData {
+				name = dicArr [0] ["name1"],
+				score = RankingResultDicArr [i] ["score"],
+				rank = i + 1
+			});
+			i++;
+		}
+
+//			if (RankingResultDicArr.Length > rankDataList.Count) {
+//				CloudBread cb = new CloudBread ();
+//				cb.CBComSelMember2 (RankingResultDicArr [i] ["element"], callback_CBComSelMember);
+//			} else {
+//				setRankBoardGameObjWithRankDataList (rankDataList);
+//			}
+
+				
+			
+		
+
+//		} 
 	}
 	
 	// Update is called once per frame
@@ -84,6 +157,27 @@ public class CBRankingGUI : MonoBehaviour {
 		rankBoardGameObj.transform.FindChild ("RnakingNumText").GetComponent<Text> ().text = (rankData.rank).ToString ();
 		rankBoardGameObj.transform.FindChild ("NameText").GetComponent<Text> ().text = rankData.name;
 		rankBoardGameObj.transform.FindChild ("ScoreText").GetComponent<Text> ().text = rankData.score;
+	}
+
+	private void setRankBoardGameObjWithRankDataList(ArrayList rankList){
+		int i = 0;
+		foreach (RankData item in rankList) {
+//			i++;
+			setRankBoardGameObjWithRankData (i, item);
+			i++;
+		}
+	}
+
+	int  getRankBoardGameObjNum(string memberID){
+		
+		int i = 0;
+		foreach (var item in RankingList) {
+			if(String.Compare(memberID, item.key) !=0)
+				return i;
+
+			i++;
+		}
+		return -1;
 	}
 
 	GridLayoutGroup gridLayoutGroup;

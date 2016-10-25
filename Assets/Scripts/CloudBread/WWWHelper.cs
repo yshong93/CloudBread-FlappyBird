@@ -50,6 +50,16 @@ public class WWWHelper : MonoBehaviour {
         POST(id, url, jsonString);
     }
 
+	// POST with Action
+	public void POST(string id, string url, object bodyObj, Action<string, WWW> callback)
+	{
+		var HeaderDic = AzureMobileAppRequestHelper.getHeader();
+
+		var jsonString = JsonParser.Write(bodyObj);
+		WWW www = new WWW(url, Encoding.UTF8.GetBytes(jsonString), HeaderDic);
+		StartCoroutine(WaitForRequest(id, www, callback));
+	}
+
 	private IEnumerator  WaitForRequest(string id, WWW www) {
 
 		yield return www;
@@ -62,6 +72,15 @@ public class WWWHelper : MonoBehaviour {
 		}
 			    
 		www.Dispose();
+	}
+
+	private IEnumerator WaitForRequest(string id, WWW www, Action<string, WWW> callback)
+	{
+		yield return www;
+
+		callback (id, www);
+
+		www.Dispose ();
 	}
 
 }
